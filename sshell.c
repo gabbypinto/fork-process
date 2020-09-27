@@ -21,12 +21,7 @@ int main (void) {
    scanf("%[^\n]s",args);
    //char* input[MAX_LINE/2+1]  = args;
    strcpy(input,args);
-   printf("%s \n", input);
-
-   for(int i=0; i<(MAX_LINE/2+1); i++){
-     char c=input[1];
-     //printf("%s", c);
-   }
+   printf("%s\n", input);
 
 
    // while(should_run){
