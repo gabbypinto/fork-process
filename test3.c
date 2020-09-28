@@ -33,8 +33,10 @@ void forking(char **args){
     }
     else{
       printf("This is a parent \n");
-      while (wait(&n) != pid)       /* wait for completion  */
-           ;
+      while (wait(NULL) != pid) {/* wait for completion  */
+        ;
+      }
+
     }
 }
 
@@ -42,7 +44,7 @@ int main(void){
   char *message;
   int count = 0;
 
-  char *args2[MAX_LINE/2+1];
+  //char *args2[MAX_LINE/2+1];
 
 
   int n;
@@ -53,17 +55,21 @@ int main(void){
   char delim[] = " ";
   // char *args[MAX_LINE/2+1];
   // printf("%s\n", input);
+  char input[1024];
+  char *ptr = strtok(input, delim);
+  char *args[MAX_LINE/2+1];
+
 
 
   while(should_run){
-      char input[1024];
+
       printf("osh> ");
       fflush(stdout);
-      gets(input);
+      gets(input);//fgets***
       // printf("\n");
+//change to fgets
       // printf("%s\n", input);
-      char *ptr = strtok(input, delim);
-      char *args[MAX_LINE/2+1];
+
 
       while(ptr!=NULL){
           args[i] = ptr;
@@ -75,7 +81,10 @@ int main(void){
       if(strcmp(args[0],"exit") == 0){
         should_run = 0;
       }
-
+      printf("Print before fork\n");
+      printf("%s\n",args[0]);
+      printf("%s\n",args[1]);
+      fflush(stdout);
       forking(args);
 
       //memset(args,0,sizeof(args));
