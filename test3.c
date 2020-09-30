@@ -18,15 +18,12 @@ void forking(char **args){
     exit(1);
   }
   else if (pid == 0){
-    //printf("this is the child\n");
-    //printf("\n");
     if (execvp(args[0],args)<0){
       printf("Error: Command not found\n");
       exit(1);
     }
   }
   else{
-    //printf("This is a parent \n");
     while (wait(NULL) != pid) {/* wait for completion  */
       ;
     }
@@ -37,6 +34,7 @@ int main(void){
   char *args[MAX_LINE/2+1];
   char input[MAX_LINE/2+1];
   int should_run = 1;
+
   /* allocate buffers */
   while(should_run == 1){
     printf("osh> ");
@@ -49,7 +47,6 @@ int main(void){
       input[strlen(input)-1] = 0;
     }
 
-    //parse(input,args);
     char *found;
     found = strtok(input," ");
     if(found==NULL){
@@ -72,6 +69,7 @@ int main(void){
     else{
       forking(args);
     }
+
     //cleaning out args array
     for(int i=0; i<MAX_LINE/2+1;i++){
       args[i]=NULL;
