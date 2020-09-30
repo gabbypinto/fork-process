@@ -3,14 +3,15 @@
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
+#include <stdbool.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 
 #define MAX_LINE 80
 
-void forking(char **args, int hasAmp){
+void forking(char **args, bool hasAmp){
   //fork process begins
   pid_t pid;
-  int n;
   pid = fork();
 
   if (pid< 0){
@@ -22,21 +23,21 @@ void forking(char **args, int hasAmp){
       printf("Error: Command not found\n");
       exit(1);
     }
+
   }
   else{
-    if(hasAmp==0){
-      while (wait(&n) != pid) {/* wait for completion  */
-        ;
+      if(hasAmp==false){
+        while (wait(NULL) != pid) {/* wait for completion  */
+        }
       }
     }
-  }
 }
 
 int main(void){
   char *args[MAX_LINE/2+1];
   char input[MAX_LINE/2+1];
   int should_run = 1;
-  int hasAmp;
+  bool hasAmp = false;
 
   /* allocate buffers */
   while(should_run == 1){
@@ -50,10 +51,10 @@ int main(void){
       input[strlen(input)-1] = 0;
     }
 
-    hasAmp=0;
+    //hasAmp=0;
     for(int i=0; i<MAX_LINE/2+1;i++){
       if(input[i] == '&'){
-        hasAmp=1;
+        hasAmp=true;
         i=MAX_LINE/2+1; //break loop
       }
     }
