@@ -7,90 +7,68 @@
 
 #define MAX_LINE 80
 
-
 void forking(char **args){
   //fork process begins
-    pid_t pid;
-    int n;
-    pid = fork();
-    // printf("%s",*args);
+  pid_t pid;
+  int n;
+  pid = fork();
+  // printf("%s",*args);
 
-
-    if (pid < 0){
-      printf("Fork error: %d (%s) \n", errno, strerror(errno));
+  if (pid< 0){
+    printf("Fork error: %d (%s) \n", errno, strerror(errno));
+    exit(1);
+  }
+  else if (pid == 0){
+    printf("this is the child\n");
+    printf("\n");
+    if (execvp(args[0],args)<0){
+      printf("error didn't execute\n");
       exit(1);
     }
-    else if (pid == 0){
-      printf("this is the child\n");
-
-      printf("\n");
-      printf("%s\n",args[0]);
-      printf("%s\n",args[1]);
-      if (execvp(args[0],args)<0){
-        printf("error didn't execute\n");
-        exit(1);
-      }
+  }
+  else{
+    printf("This is a parent \n");
+    while (wait(NULL) != pid) {/* wait for completion  */
+      ;
     }
-    else{
-      printf("This is a parent \n");
-      while (wait(NULL) != pid) {/* wait for completion  */
-        ;
-      }
-
-    }
+  }
 }
 
 int main(void){
-  char *message;
-  int count = 0;
-
-  //char *args2[MAX_LINE/2+1];
-
-
-  int n;
-  int should_run =1;
-
-
-  int i =0;
-  char delim[] = " ";
-  // char *args[MAX_LINE/2+1];
-  // printf("%s\n", input);
-  char input[1024];
-  char *ptr = strtok(input, delim);
   char *args[MAX_LINE/2+1];
+  char input[MAX_LINE/2+1];
+  int should_run = 1;
+  /* allocate buffers */
+  while(should_run == 1){
+    printf("osh> ");
+    fflush(stdout);
 
+    //gets(input);//fgets**
+    fgets(input, MAX_LINE/2+1, stdin);
 
-
-  while(should_run){
-
-      printf("osh> ");
-      fflush(stdout);
-      gets(input);//fgets***
-      // printf("\n");
-//change to fgets
-      // printf("%s\n", input);
-
-
-      while(ptr!=NULL){
-          args[i] = ptr;
-          ptr = strtok(NULL, delim);
-          i++;
-      }
-      // printf("%s\n",args[0]);
-
-      if(strcmp(args[0],"exit") == 0){
-        should_run = 0;
-      }
-      printf("Print before fork\n");
-      printf("%s\n",args[0]);
-      printf("%s\n",args[1]);
-      fflush(stdout);
-      forking(args);
-
-      //memset(args,0,sizeof(args));
-
+    //parse(input,args);
+    char *found;
+    found = strtok(input," ");
+    if(found==NULL){
+      printf("\t'%s'\n",input);
+      puts("\tNo separators found");
+      return(1);
+    }
+    int count=0;
+    while(found){
+      //printf("\t'%s'\n",found);
+      args[count]=found;
+      found = strtok(NULL," ");
+      printf("%s", args[count]);
+      count++;
+    }
+    /*if(strcmp(found[0],"exit") == 0){
+            printf("adios...");
+            should_run = 0;
+          }*/
+        //printf("%s", found[0]);
+    forking(args);
+    should_run=0;
   }
-
   return 0;
-
 }
