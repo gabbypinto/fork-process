@@ -12,22 +12,21 @@ void forking(char **args){
   pid_t pid;
   int n;
   pid = fork();
-  // printf("%s",*args);
 
   if (pid< 0){
     printf("Fork error: %d (%s) \n", errno, strerror(errno));
     exit(1);
   }
   else if (pid == 0){
-    printf("this is the child\n");
-    printf("\n");
+    //printf("this is the child\n");
+    //printf("\n");
     if (execvp(args[0],args)<0){
       printf("error didn't execute\n");
       exit(1);
     }
   }
   else{
-    printf("This is a parent \n");
+    //printf("This is a parent \n");
     while (wait(NULL) != pid) {/* wait for completion  */
       ;
     }
@@ -43,32 +42,37 @@ int main(void){
     printf("osh> ");
     fflush(stdout);
 
-    //gets(input);//fgets**
     fgets(input, MAX_LINE/2+1, stdin);
+
+    //Removing \n character from end of input
+    if(input[strlen(input)-1] == '\n'){
+      input[strlen(input)-1] = 0;
+    }
 
     //parse(input,args);
     char *found;
     found = strtok(input," ");
     if(found==NULL){
-      printf("\t'%s'\n",input);
       puts("\tNo separators found");
       return(1);
     }
+
     int count=0;
     while(found){
-      //printf("\t'%s'\n",found);
       args[count]=found;
       found = strtok(NULL," ");
-      printf("%s", args[count]);
       count++;
     }
-    /*if(strcmp(found[0],"exit") == 0){
-            printf("adios...");
-            should_run = 0;
-          }*/
-        //printf("%s", found[0]);
-    forking(args);
-    should_run=0;
+
+    //check if user wants to exit
+    if(strcmp(args[0],"exit") == 0){
+      printf("Exiting...\n");
+      should_run = 0;
+    }
+    else{
+      forking(args);
+    }
+    fflush(stdout);
   }
   return 0;
 }
