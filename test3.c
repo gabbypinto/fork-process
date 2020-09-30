@@ -24,6 +24,7 @@ void forking(char **args){
     }
   }
   else{
+    //don't wait for &
     while (wait(NULL) != pid) {/* wait for completion  */
       ;
     }

@@ -8,7 +8,6 @@
 #define MAX_LINE 80
 
 void forking(char **args, int hasAmp){
-  printf("HAs amp:%d\n", hasAmp);
   //fork process begins
   pid_t pid;
   int n;
@@ -26,7 +25,7 @@ void forking(char **args, int hasAmp){
   }
   else{
     if(hasAmp==0){
-      while (wait(NULL) != pid) {/* wait for completion  */
+      while (wait(&n) != pid) {/* wait for completion  */
         ;
       }
     }
@@ -50,11 +49,13 @@ int main(void){
     if(input[strlen(input)-1] == '\n'){
       input[strlen(input)-1] = 0;
     }
+
     hasAmp=0;
     for(int i=0; i<MAX_LINE/2+1;i++){
       if(input[i] == '&'){
         hasAmp=1;
-        i=MAX_LINE/2+1;
+        i=MAX_LINE/2+1; //break loop
+      }
     }
 
 
@@ -67,9 +68,15 @@ int main(void){
 
     int count=0;
     while(found){
-      args[count]=found;
-      found = strtok(NULL," ");
-      count++;
+      if(*found=='&'){
+        found = strtok(NULL," ");
+        count++;
+      }
+      else{
+        args[count]=found;
+        found = strtok(NULL," ");
+        count++;
+      }
     }
 
     //check if user wants to exit
@@ -77,6 +84,8 @@ int main(void){
       printf("Exiting...\n");
       should_run = 0;
     }
+
+    //don't include & in the args
     else{
       forking(args, hasAmp);
     }
