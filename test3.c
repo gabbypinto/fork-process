@@ -21,7 +21,7 @@ void forking(char **args){
     //printf("this is the child\n");
     //printf("\n");
     if (execvp(args[0],args)<0){
-      printf("error didn't execute\n");
+      printf("Error: Command not found\n");
       exit(1);
     }
   }
@@ -72,7 +72,10 @@ int main(void){
     else{
       forking(args);
     }
-    fflush(stdout);
+    //cleaning out args array
+    for(int i=0; i<MAX_LINE/2+1;i++){
+      args[i]=NULL;
+    }
   }
   return 0;
 }
