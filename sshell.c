@@ -7,7 +7,7 @@
 
 #define MAX_LINE 80
 
-void forking(char **args){
+void forking(char **args, int hasAmp){
   //fork process begins
   pid_t pid;
   int n;
@@ -24,9 +24,11 @@ void forking(char **args){
     }
   }
   else{
-      while (wait(NULL) != pid) {/* wait for completion  */
+    if(hasAmp==0){
+      while (wait(&n) != pid) {/* wait for completion  */
         ;
       }
+    }
   }
 }
 
@@ -34,12 +36,13 @@ int main(void){
   char *args[MAX_LINE/2+1];
   char input[MAX_LINE/2+1];
   int should_run = 1;
+  int hasAmp;
+
 
   /* allocate buffers */
   while(should_run == 1){
     printf("osh> ");
     fflush(stdout);
-
     fgets(input, MAX_LINE/2+1, stdin);
 
     //Removing \n character from end of input
@@ -47,19 +50,32 @@ int main(void){
       input[strlen(input)-1] = 0;
     }
 
+    hasAmp=0;
+    for(int i=0; i<MAX_LINE/2+1;i++){
+      if(input[i] == '&'){
+        hasAmp=1;
+        i=MAX_LINE/2+1; //break loop
+      }
+    }
+
 
     char *found;
     found = strtok(input," ");
     if(found==NULL){
-      puts("\tNo separators found");
-      return(1);
+      continue;
     }
 
     int count=0;
     while(found){
-      args[count]=found;
-      found = strtok(NULL," ");
-      count++;
+      if(*found=='&'){
+        found = strtok(NULL," ");
+        count++;
+      }
+      else{
+        args[count]=found;
+        found = strtok(NULL," ");
+        count++;
+      }
     }
 
     //check if user wants to exit
@@ -67,8 +83,10 @@ int main(void){
       printf("Exiting...\n");
       should_run = 0;
     }
+
+    //don't include & in the args
     else{
-      forking(args);
+      forking(args, hasAmp);
     }
 
     //cleaning out args array
