@@ -13,19 +13,19 @@ void forking(char **args, int hasAmp){
   int n;
   pid = fork();
 
-  if (pid< 0){
+  if (pid< 0){  
     printf("Fork error: %d (%s) \n", errno, strerror(errno));
     exit(1);
   }
-  else if (pid == 0){
+  else if (pid == 0){ //child
     if (execvp(args[0],args)<0){
       printf("Error: Command not found\n");
       exit(1);
     }
   }
-  else{
+  else{  //parent
     if(hasAmp==0){
-      while (wait(&n) != pid) {/* wait for completion  */
+      while (wait(&n) != pid) {  /* wait for completion  */
         ;
       }
     }
@@ -60,17 +60,21 @@ int main(void){
 
 
     char *found;
-    found = strtok(input," ");
+    found = strtok(input," "); //separate input to token
+
+    //if user enter the space skip
     if(found==NULL){
       continue;
     }
 
     int count=0;
     while(found){
+      // if there's a & don't add to args
       if(*found=='&'){
         found = strtok(NULL," ");
         count++;
       }
+      //adding to args
       else{
         args[count]=found;
         found = strtok(NULL," ");
