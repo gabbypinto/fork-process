@@ -1,3 +1,5 @@
+//Gabriela Pinto and Katherine Hansen
+//2318655 and 2326665
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
